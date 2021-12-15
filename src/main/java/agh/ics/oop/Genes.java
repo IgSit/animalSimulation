@@ -1,5 +1,7 @@
 package agh.ics.oop;
 
+import java.util.Arrays;
+
 public class Genes {
     private final int[] genes;
     private final int length;
@@ -18,6 +20,10 @@ public class Genes {
         genes = generateGenes(fatherEnergy, motherEnergy, fatherGenes, motherGenes);
     }
 
+    public int[] getGenes() {
+        return genes;
+    }
+
     public int getRandomGene() {
         int index = (int) (Math.random() * length);
         return genes[index];
@@ -28,6 +34,7 @@ public class Genes {
         for (int i = 0; i < length; i++) {
             sequence[i] = (int) (Math.random() * 8);
         }
+        Arrays.sort(sequence);
         return sequence;
     }
 
@@ -44,6 +51,7 @@ public class Genes {
             System.arraycopy(fatherGenes.genes, length - splitIndex, sequence, 0, splitIndex);
             System.arraycopy(motherGenes.genes, 0, sequence, splitIndex, length - splitIndex);
         }
+        Arrays.sort(sequence);
         return sequence;
     }
 

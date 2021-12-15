@@ -1,19 +1,26 @@
 package agh.ics.oop;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Animal extends MapObject implements Comparator<Animal> {
     private MapDirection orientation;
     private int energy;
     private final Genes genes;
-    private final IWorldMap map;
+    private final ArrayList<Integer> dominantGenes;
+    private boolean trackedByGenotype = false;
+    private final AbstractWorldMap map;
+    private int numberOfChildren = 0;
+    private final int birthDay;
 
-    public Animal(Vector2d position, int energy, IWorldMap map) {  // constructor for non-born animal
+    public Animal(Vector2d position, int energy, AbstractWorldMap map) {  // constructor for non-born animal
         super(position);
         this.orientation = MapDirection.NORTH.makeRandomOrientation();
         this.energy = energy;
         genes = new Genes(32);
+        dominantGenes = findDominantGenes();
         this.map = map;
+        birthDay = map.getDay();
     }
 
     public Animal(Animal father, Animal mother) {
@@ -21,13 +28,40 @@ public class Animal extends MapObject implements Comparator<Animal> {
         orientation = MapDirection.NORTH.makeRandomOrientation();
         energy = (int) (0.25 * (father.energy + mother.energy) );
         genes = new Genes(father, mother);
+        dominantGenes = findDominantGenes();
         map = father.map;
+        birthDay = map.getDay();
+    }
+
+    public void setTrackedByGenotype(boolean trackedByGenotype) {
+        this.trackedByGenotype = trackedByGenotype;
+    }
+
+    private ArrayList<Integer> findDominantGenes() {
+        int[] countGeneRepetitions = new int[8];
+        for (int i : genes.getGenes()) {
+            countGeneRepetitions[i]++;
+        }
+        int maxRep = 0;
+        for (int gene = 0; gene < 8; gene++) {
+            maxRep = Math.max(maxRep, countGeneRepetitions[gene]);
+        }
+        ArrayList<Integer> dominant = new ArrayList<>();
+        for (int gene = 0; gene < 8; gene++) {
+            if (countGeneRepetitions[gene] == maxRep) dominant.add(gene);
+        }
+        return dominant;
+    }
+
+    public ArrayList<Integer> getDominantGenes() {
+        return dominantGenes;
     }
 
     public Vector2d getPosition() {
         return position;
     }
 
+    @Override
     public int getEnergy() {
         return energy;
     }
@@ -36,8 +70,22 @@ public class Animal extends MapObject implements Comparator<Animal> {
         return genes;
     }
 
+    public int getNumberOfChildren() { return numberOfChildren; }
+
+    public int calcLifeTime(int day) {
+        return day - birthDay + 1;
+    }
+
     public void changeEnergy(int value) {
         energy += value;
+    }
+
+    @Override
+    public boolean hasEnergy() { return true; }
+
+    @Override
+    public boolean isTrackedByGenotype() {
+        return trackedByGenotype;
     }
 
     @Override
@@ -62,7 +110,7 @@ public class Animal extends MapObject implements Comparator<Animal> {
             case WEST -> "src/main/resources/left.png";
             case SOUTHWEST -> "src/main/resources/downleft.png";
             case SOUTH -> "src/main/resources/down.png";
-            case SOUTHEAST -> "src/main/resources/downrigth.png";
+            case SOUTHEAST -> "src/main/resources/downright.png";
             case EAST -> "src/main/resources/right.png";
             case NORTHEAST -> "src/main/resources/upright.png";
         };
@@ -84,6 +132,13 @@ public class Animal extends MapObject implements Comparator<Animal> {
         }
     }
 
+    private Vector2d applyMapBorders(Vector2d position) {
+        if (map.isBorderless()) {
+            position = new Vector2d(position.x() % map.getWidth(), position.y() % map.getHeight());
+        }
+        return position;
+    }
+
     public void move(MoveDirection direction) {
         switch (direction) {
             case RIGHT -> orientation = orientation.next();
@@ -93,6 +148,7 @@ public class Animal extends MapObject implements Comparator<Animal> {
                 if (direction == MoveDirection.BACKWARD)
                     unitVector = unitVector.opposite();
                 Vector2d newPosition = position.add(unitVector);
+                newPosition = applyMapBorders(newPosition);
                 if (map.canMoveTo(newPosition)) {
                     positionChanged(position, newPosition);
                     position = newPosition;
@@ -120,6 +176,9 @@ public class Animal extends MapObject implements Comparator<Animal> {
         Animal child = new Animal(this, mother);
         changeEnergy((int) (-0.25 * energy));
         mother.changeEnergy((int) (-0.25 * mother.energy));
+        numberOfChildren++;
+        mother.numberOfChildren++;
+        map.numberOfDeadAnimals++;
         return child;
     }
 

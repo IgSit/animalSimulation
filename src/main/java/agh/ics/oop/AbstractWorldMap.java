@@ -8,7 +8,9 @@ import java.util.LinkedHashMap;
 abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
     protected final LinkedHashMap<Vector2d, ArrayList<Animal>> animals;
     protected final HashSet<Animal> allAnimalSet;
-    protected int numberOfAnimals = 0;
+    protected double averageLifeTime = 0;
+    protected int numberOfDeadAnimals = 0;
+    protected int day = 0;
 
     public AbstractWorldMap() {
         animals = new LinkedHashMap<>();
@@ -16,7 +18,14 @@ abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObse
     }
 
     public abstract Vector2d getLowerLeft();
+
     public abstract Vector2d getUpperRight();
+
+    public abstract boolean isBorderless();
+
+    public abstract int getWidth();
+
+    public abstract int getHeight();
 
     @Override
     public abstract void positionChanged(Animal animal, Vector2d oldPosition, Vector2d newPosition);
@@ -30,7 +39,6 @@ abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObse
             animals.put(position, animalList);
             allAnimalSet.add(newAnimal);
             newAnimal.addObserver(this);
-            numberOfAnimals++;
             return true;
         }
         throw new IllegalArgumentException("Position " + position + " is already occupied");
@@ -46,4 +54,33 @@ abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return objectAt(position) != null;
     }
 
+    // stats methods
+
+    public int getNumberOfAnimals() {
+        return allAnimalSet.size();
+    }
+
+    public double getAverageLifeTime() {
+        return averageLifeTime;
+    }
+
+    public double getAverageAnimalEnergy() {
+        double sum = 0;
+        for (Animal animal : allAnimalSet) {
+            sum += animal.getEnergy();
+        }
+        return sum / allAnimalSet.size();
+    }
+
+    public double getAverageAmountOfChildren() {
+        double sum = 0;
+        for (Animal animal : allAnimalSet) {
+            sum += animal.getNumberOfChildren();
+        }
+        return sum / allAnimalSet.size();
+    }
+
+    public int getDay() {
+        return day;
+    }
 }

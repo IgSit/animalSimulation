@@ -8,6 +8,21 @@ public class Grass extends MapObject{
         this.energyProfit = energyProfit;
     }
 
+    @Override
+    public boolean isTrackedByGenotype() {
+        return false;
+    }
+
+    @Override
+    public boolean hasEnergy() {
+        return false;
+    }
+
+    @Override
+    public int getEnergy() {
+        return 0;
+    }
+
     public Vector2d getPosition() {
         return position;
     }

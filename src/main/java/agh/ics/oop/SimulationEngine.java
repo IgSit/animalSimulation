@@ -1,15 +1,26 @@
 package agh.ics.oop;
 
+import agh.ics.oop.gui.PartialApp;
+
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.Collections.shuffle;
 
-public class SimulationEngine implements IEngine{
+public class SimulationEngine implements IEngine, Runnable{
     private final RectangularMap map;
+    private final ArrayList<IEngineMoveObserver> observers;
+    private final int moveDelay = 300;
+    private final PartialApp app;
 
-    public SimulationEngine(RectangularMap map, int numberOfAnimals) {
+    public SimulationEngine(RectangularMap map, int numberOfAnimals, PartialApp app) {
         this.map = map;
+        observers = new ArrayList<>();
         generateAnimals(numberOfAnimals, map.getStartEnergy());
+        this.app = app;
+    }
+
+    public RectangularMap getMap() {
+        return map;
     }
 
     private void generateAnimals(int numberOfAnimals, int startEnergy) {
@@ -26,15 +37,30 @@ public class SimulationEngine implements IEngine{
             map.place(animal);
         }
     }
+    @Override
+    public int getMoveDelay() {
+        return moveDelay;
+    }
 
+    @Override
+    public void addObserver(IEngineMoveObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public ArrayList<IEngineMoveObserver> getObservers() {
+        return observers;
+    }
+
+    @Override
     public void run() {
         while (map.getNumberOfAnimals() > 0){
-            System.out.println(map);
             map.removingDeadAnimalsPhase();
-            map.movingAllAnimalsPhase();
+            map.movingAllAnimalsPhase(this);
             map.eatingGrassesPhase();
             map.copulatingPhase();
             map.grassGrowthPhase();
+            app.newDay(map.getDay());
         }
     }
 }

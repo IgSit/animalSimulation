@@ -13,6 +13,12 @@ public abstract class MapObject{
 
     public abstract String getImageURL();
 
+    public abstract boolean hasEnergy();
+
+    public abstract int getEnergy();
+
+    public abstract boolean isTrackedByGenotype();
+
     public Vector2d getPosition() {
         return position;
     }

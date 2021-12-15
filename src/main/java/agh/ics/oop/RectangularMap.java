@@ -7,11 +7,14 @@ public class RectangularMap extends AbstractWorldMap{
     // basic info constants
     private final Vector2d lowerLeft;
     private final Vector2d upperRight;
+    private final int width;
+    private final int height;
     private final Vector2d jungleLowerLeft;
     private final Vector2d jungleUpperRight;
     private final int startEnergy;
     private final int plantEnergy;
     private final int dayEnergyCost;
+    private final boolean borderless;
     // map objects
     private final LinkedHashMap<Vector2d, Grass> grasses;
     private final HashSet<Grass> allGrassSet;
@@ -19,34 +22,50 @@ public class RectangularMap extends AbstractWorldMap{
     private final AnimalComparator animalComparator = new AnimalComparator();
 
     public RectangularMap(int width, int height, double ratio, int startEnergy,
-                          int plantEnergy, int dayEnergyCost) {
+                          int plantEnergy, int dayEnergyCost, boolean borderless) {
         super();
         lowerLeft = new Vector2d(0, 0);
         upperRight = new Vector2d(width - 1, height - 1);
+        this.width = width;
+        this.height = height;
         jungleLowerLeft = calcJungleLowerLeft(width, height, ratio);
         jungleUpperRight = calcJungleUpperRight(width, height, ratio);
         this.startEnergy = startEnergy;
         this.plantEnergy = plantEnergy;
         this.dayEnergyCost = dayEnergyCost;
+        this.borderless = borderless;
         grasses = new LinkedHashMap<>();
         allGrassSet = new HashSet<>();
         generateGrass();
-    }
-
-    public int getNumberOfAnimals() {
-        return numberOfAnimals;
     }
 
     public int getStartEnergy() {
         return startEnergy;
     }
 
+    @Override
     public Vector2d getLowerLeft() {
         return lowerLeft;
     }
 
+    @Override
     public Vector2d getUpperRight() {
         return upperRight;
+    }
+
+    @Override
+    public boolean isBorderless() {
+        return borderless;
+    }
+
+    @Override
+    public int getWidth() {
+        return  width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
     }
 
     // I do not mess with perfect centering of jungle, who cares
@@ -61,8 +80,8 @@ public class RectangularMap extends AbstractWorldMap{
     private Vector2d calcJungleUpperRight(int width, int height, double ratio) {
         int jungleWidth =(int) (width * ratio);
         int jungleHeight = (int) (height * ratio);
-        int x = (width / 2) + (jungleWidth / 2);
-        int y = (height / 2) + (jungleHeight / 2);
+        int x = (width / 2) + (jungleWidth / 2) - 1;
+        int y = (height / 2) + (jungleHeight / 2) - 1;
         return new Vector2d(x, y);
     }
 
@@ -83,7 +102,7 @@ public class RectangularMap extends AbstractWorldMap{
     }
 
     @Override
-    public Object objectAt(Vector2d position) {
+    public MapObject objectAt(Vector2d position) {
         ArrayList<Animal> animalList = animals.get(position);
         if (animalList != null && animalList.size() > 0)
             return animalList.get(0);
@@ -209,32 +228,42 @@ public class RectangularMap extends AbstractWorldMap{
         animals.get(position).add(child);
         allAnimalSet.add(child);
         animals.get(position).sort(animalComparator);
-        numberOfAnimals++;
     }
 
     // methods for carrying the epoque (methods for all present animals/grasses)
     // not sure whether these methods should be here or in SimulationEngine, decided to be here
 
     public void removingDeadAnimalsPhase() {
+        day++;
         // apply dayEnergyCost
         ArrayList<Animal> toRemove = new ArrayList<>();
         for (Animal animal : allAnimalSet) {
             animal.changeEnergy(-dayEnergyCost);
             if (animal.getEnergy() <= 0) {
                 toRemove.add(animal);
-                numberOfAnimals--;
             }
         }
         for (Animal animal : toRemove) {
             animals.get(animal.getPosition()).remove(animal);
             allAnimalSet.remove(animal);
             animal.removeObserver(this);
+            numberOfDeadAnimals++;
+            averageLifeTime += (animal.calcLifeTime(getDay()) - averageLifeTime) / numberOfDeadAnimals;
+            // found that equation on Internet, hope it works
         }
     }
 
-    public void movingAllAnimalsPhase() {
+    public void movingAllAnimalsPhase(IEngine engine) {
         for (Animal animal : allAnimalSet) {
+            try {
+                Thread.sleep(engine.getMoveDelay());
+            } catch (InterruptedException exception) {
+                exception.printStackTrace();
+            }
             animal.moveFreely();
+            for (IEngineMoveObserver observer : engine.getObservers()) {
+                observer.mapChanged();
+            }
         }
     }
 
@@ -264,5 +293,45 @@ public class RectangularMap extends AbstractWorldMap{
     public void grassGrowthPhase() {
         addRandomGrass(jungleLowerLeft, jungleUpperRight);
         addRandomGrass(lowerLeft, upperRight);
+    }
+
+    // stats methods
+    public int getNumberOfGrass() {
+        return allGrassSet.size();
+    }
+
+    public ArrayList<ArrayList<Integer>> findDominantGenotypes() {
+        HashMap<ArrayList<Integer>, Integer> map = new HashMap<>();
+        for (Animal animal : allAnimalSet) {
+            ArrayList<Integer> animalGenes = animal.getDominantGenes();
+            if (map.containsKey(animalGenes)) {
+                Integer newValue = map.get(animalGenes) + 1;
+                map.put(animalGenes, newValue);
+            }
+            else map.put(animalGenes, 1);
+        }
+        Set<ArrayList<Integer>> set = map.keySet();
+        int dominantRepNumber = 0;
+        for (ArrayList<Integer> genotype : set) {
+            dominantRepNumber = Math.max(dominantRepNumber, map.get(genotype));
+        }
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        for (ArrayList<Integer> genotype : set) {
+            if (map.get(genotype) == dominantRepNumber) result.add(genotype);
+        }
+        return result;
+    }
+
+    public void trackDominantGeneAnimals() {
+        ArrayList<ArrayList<Integer>> dominantGenotypes = findDominantGenotypes();
+        for (Animal animal : allAnimalSet) {
+            if (dominantGenotypes.contains(animal.getDominantGenes())) animal.setTrackedByGenotype(true);
+        }
+    }
+
+    public void untrackDominantGeneAnimals() {
+        for (Animal animal : allAnimalSet) {
+            animal.setTrackedByGenotype(false);
+        }
     }
 }
