@@ -2,16 +2,13 @@ package agh.ics.oop.gui;
 
 import agh.ics.oop.gui.InputOutput.CSVWriter;
 import agh.ics.oop.gui.mapVisualisation.MapVisualiser;
-import agh.ics.oop.gui.statsAndPlots.Plotter;
-import agh.ics.oop.gui.statsAndPlots.StatsPanel;
-import agh.ics.oop.gui.statsAndPlots.StatsPlotter;
+import agh.ics.oop.gui.statsAndPlots.*;
 import agh.ics.oop.interfaces.IEngineMoveObserver;
 import agh.ics.oop.map.RectangularMap;
 import agh.ics.oop.engine.SimulationEngine;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 public class PartialApp implements IEngineMoveObserver {
     private final SimulationEngine engine;
@@ -42,7 +39,7 @@ public class PartialApp implements IEngineMoveObserver {
         mapVisualiser.drawMap(map);
         plotter.start();
         statsPlotter.start();
-        sendDataToFile();
+        newDay(0);
 
         Thread engineThread = new Thread(engine);
         Button startButton = new Button("Start");

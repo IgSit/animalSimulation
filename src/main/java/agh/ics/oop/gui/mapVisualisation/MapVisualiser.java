@@ -36,7 +36,7 @@ public class MapVisualiser {
         else {
             Vector2d position = new Vector2d(mapX, mapY);
             if (map.isOccupied(position)) {
-                GuiElementBox elementBox = new GuiElementBox();
+                GuiElementBox elementBox = new GuiElementBox(Math.min(map.getWidth(), map.getHeight()));
                 return elementBox.updateBox(map.objectAt(position), map.inJungle(position), map.getStartEnergy());
             }
             VBox emptyBox = new VBox();
@@ -64,11 +64,11 @@ public class MapVisualiser {
             }
         }
         for (int i = 0; i <= yRange; ++i) {
-            gridPane.getRowConstraints().add(new RowConstraints(25));
+            gridPane.getRowConstraints().add(new RowConstraints(300.0 / map.getHeight()));
         }
 
         for (int i = 0; i <= xRange; ++i) {
-            gridPane.getColumnConstraints().add(new ColumnConstraints(25));
+            gridPane.getColumnConstraints().add(new ColumnConstraints(300.0 / map.getWidth()));
         }
         gridPane.setGridLinesVisible(true);
     }

@@ -11,17 +11,18 @@ import java.io.FileNotFoundException;
 
 public class GuiElementBox {
     private static final ImageFactory factory = new ImageFactory();
+    private final int delimiter;
 
-    public GuiElementBox() {
-
+    public GuiElementBox(int delimiter) {
+        this.delimiter = delimiter;  // smaller of map width and height to make at least not buggy visualisation
     }
 
     public VBox updateBox(MapObject object, boolean inJungle, int startEnergy) {
         try {
             Image image = factory.getImage(object.getImageURL());
             ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(20);
-            imageView.setFitHeight(20);
+            imageView.setFitWidth(200.0 / delimiter);
+            imageView.setFitHeight(200.0 / delimiter);
             VBox vBox = new VBox(imageView);
             vBox.setAlignment(Pos.CENTER);
             if (inJungle)
