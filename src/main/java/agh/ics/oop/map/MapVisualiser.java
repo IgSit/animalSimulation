@@ -1,7 +1,9 @@
-package agh.ics.oop;
+package agh.ics.oop.map;
+
+import agh.ics.oop.interfaces.IWorldMap;
 
 /**
- * The map visualizer converts the {@link IWorldMap} map into a string
+ * The agh.ics.oop.map visualizer converts the {@link IWorldMap} agh.ics.oop.map into a string
  * representation.
  *
  * @author apohllo
@@ -13,7 +15,7 @@ public class MapVisualiser {
     private final IWorldMap map;
 
     /**
-     * Initializes the MapVisualizer with an instance of map to visualize.
+     * Initializes the MapVisualizer with an instance of agh.ics.oop.map to visualize.
      *
      * @param map the said instance.
      */
@@ -22,13 +24,13 @@ public class MapVisualiser {
     }
 
     /**
-     * Convert selected region of the map into a string. It is assumed that the
-     * indices of the map will have no more than two characters (including the
+     * Convert selected region of the agh.ics.oop.map into a string. It is assumed that the
+     * indices of the agh.ics.oop.map will have no more than two characters (including the
      * sign).
      *
      * @param lowerLeft  The lower left corner of the region that is drawn.
      * @param upperRight The upper right corner of the region that is drawn.
-     * @return String representation of the selected region of the map.
+     * @return String representation of the selected region of the agh.ics.oop.map.
      */
     public String draw(Vector2d lowerLeft, Vector2d upperRight) {
         StringBuilder builder = new StringBuilder();

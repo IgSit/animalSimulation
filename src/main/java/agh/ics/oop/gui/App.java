@@ -1,6 +1,7 @@
 package agh.ics.oop.gui;
 
-import agh.ics.oop.*;
+import agh.ics.oop.gui.InputOutput.InputValues;
+import agh.ics.oop.map.RectangularMap;
 import javafx.application.*;
 import javafx.geometry.Pos;
 import javafx.scene.*;
@@ -58,8 +59,8 @@ public class App extends Application{
                 RectangularMap nonBorderedMap = new RectangularMap(width, height, jungleRation, animalEnergy, plantEnergy, moveEnergy, false);
                 int numberOfAnimals = Integer.parseInt(textFields[InputValues.ANIMAL_AMOUNT.toIndex()].getText());
 
-                borderedApp = new PartialApp(borderedMap, numberOfAnimals);
-                nonBorderedApp = new PartialApp(nonBorderedMap, numberOfAnimals);
+                borderedApp = new PartialApp(borderedMap, numberOfAnimals, "borderedData.csv");
+                nonBorderedApp = new PartialApp(nonBorderedMap, numberOfAnimals, "nonBorderedData.csv");
 
                 runSimulation(primaryStage);
             });
@@ -74,6 +75,10 @@ public class App extends Application{
         Scene newScene = new Scene(new HBox(borderedApp.runSimulation(), nonBorderedApp.runSimulation()), 1300, 700);
         primaryStage.setScene(newScene);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(windowEvent -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
 }

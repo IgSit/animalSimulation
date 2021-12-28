@@ -1,8 +1,13 @@
 package agh.ics.oop.gui;
 
-import agh.ics.oop.IEngineMoveObserver;
-import agh.ics.oop.RectangularMap;
-import agh.ics.oop.SimulationEngine;
+import agh.ics.oop.gui.InputOutput.CSVWriter;
+import agh.ics.oop.gui.mapVisualisation.MapVisualiser;
+import agh.ics.oop.gui.statsAndPlots.Plotter;
+import agh.ics.oop.gui.statsAndPlots.StatsPanel;
+import agh.ics.oop.gui.statsAndPlots.StatsPlotter;
+import agh.ics.oop.interfaces.IEngineMoveObserver;
+import agh.ics.oop.map.RectangularMap;
+import agh.ics.oop.engine.SimulationEngine;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -11,30 +16,33 @@ import javafx.scene.layout.VBox;
 public class PartialApp implements IEngineMoveObserver {
     private final SimulationEngine engine;
     private final RectangularMap map;
-    private MapVisualiser mapVisualiser;
-    private Plotter plotter;
-    private StatsPlotter statsPlotter;
-    private StatsPanel statsPanel;
+    private final MapVisualiser mapVisualiser;
+    private final Plotter plotter;
+    private final StatsPlotter statsPlotter;
+    private final StatsPanel statsPanel;
+    private final CSVWriter csvWriter;
 
-    public PartialApp(RectangularMap map, int numberOfAnimals) {
+    public PartialApp(RectangularMap map, int numberOfAnimals, String filename) {
         this.map = map;
         engine = new SimulationEngine(map, numberOfAnimals, this);
         engine.addObserver(this);
+        mapVisualiser = new MapVisualiser(map);
+        plotter = new Plotter(25);
+        statsPlotter = new StatsPlotter(25);
+        statsPanel = new StatsPanel(map, mapVisualiser);
+        csvWriter = new CSVWriter(filename);
     }
 
     @Override
     public void mapChanged() {
-        Platform.runLater(() -> mapVisualiser.mapChanged());
+        Platform.runLater(mapVisualiser::mapChanged);
     }
 
     public HBox runSimulation() {
-        mapVisualiser = new MapVisualiser(map);
         mapVisualiser.drawMap(map);
-        plotter = new Plotter(25);
         plotter.start();
-        statsPlotter = new StatsPlotter(25);
         statsPlotter.start();
-        statsPanel = new StatsPanel(map, mapVisualiser);
+        sendDataToFile();
 
         Thread engineThread = new Thread(engine);
         Button startButton = new Button("Start");
@@ -63,5 +71,16 @@ public class PartialApp implements IEngineMoveObserver {
         statsPlotter.updatePlot(day, map.getAverageAnimalEnergy(), map.getAverageLifeTime(),
                 map.getAverageAmountOfChildren());
         statsPanel.updateStats();
+        sendDataToFile();
+    }
+
+    private void sendDataToFile() {
+        String row = "";
+        row += map.getNumberOfAnimals() + ", ";
+        row += map.getNumberOfGrass() + ", ";
+        row += map.getAverageAnimalEnergy() + ", ";
+        row += map.getAverageLifeTime() + ", ";
+        row += map.getAverageAmountOfChildren() + ",\n";
+        csvWriter.addStats(row);
     }
 }

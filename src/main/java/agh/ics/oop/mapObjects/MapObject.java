@@ -1,4 +1,7 @@
-package agh.ics.oop;
+package agh.ics.oop.mapObjects;
+
+import agh.ics.oop.interfaces.IPositionChangeObserver;
+import agh.ics.oop.map.Vector2d;
 
 import java.util.HashSet;
 

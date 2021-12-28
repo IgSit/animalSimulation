@@ -1,6 +1,6 @@
-package agh.ics.oop.gui;
+package agh.ics.oop.gui.mapVisualisation;
 
-import agh.ics.oop.MapObject;
+import agh.ics.oop.mapObjects.MapObject;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.image.*;

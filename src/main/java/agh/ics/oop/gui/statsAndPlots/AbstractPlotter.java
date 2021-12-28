@@ -1,4 +1,4 @@
-package agh.ics.oop.gui;
+package agh.ics.oop.gui.statsAndPlots;
 
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;

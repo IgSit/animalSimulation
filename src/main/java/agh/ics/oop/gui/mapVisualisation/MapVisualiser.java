@@ -1,8 +1,8 @@
-package agh.ics.oop.gui;
+package agh.ics.oop.gui.mapVisualisation;
 
-import agh.ics.oop.AbstractWorldMap;
-import agh.ics.oop.RectangularMap;
-import agh.ics.oop.Vector2d;
+import agh.ics.oop.map.AbstractWorldMap;
+import agh.ics.oop.map.RectangularMap;
+import agh.ics.oop.map.Vector2d;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;

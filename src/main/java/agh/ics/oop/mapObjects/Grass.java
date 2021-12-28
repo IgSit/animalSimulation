@@ -1,9 +1,11 @@
-package agh.ics.oop;
+package agh.ics.oop.mapObjects;
+
+import agh.ics.oop.map.Vector2d;
 
 public class Grass extends MapObject{
     private final int energyProfit;
 
-    public Grass(Vector2d position,int energyProfit) {
+    public Grass(Vector2d position, int energyProfit) {
         super(position);
         this.energyProfit = energyProfit;
     }

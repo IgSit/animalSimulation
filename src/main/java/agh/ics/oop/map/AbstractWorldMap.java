@@ -1,11 +1,15 @@
-package agh.ics.oop;
+package agh.ics.oop.map;
 
+
+import agh.ics.oop.mapObjects.Animal;
+import agh.ics.oop.interfaces.IPositionChangeObserver;
+import agh.ics.oop.interfaces.IWorldMap;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 
-abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver{
+abstract public class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected final LinkedHashMap<Vector2d, ArrayList<Animal>> animals;
     protected final HashSet<Animal> allAnimalSet;
     protected double averageLifeTime = 0;

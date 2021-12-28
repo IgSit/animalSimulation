@@ -1,6 +1,7 @@
-package agh.ics.oop.gui;
+package agh.ics.oop.gui.statsAndPlots;
 
-import agh.ics.oop.RectangularMap;
+import agh.ics.oop.gui.mapVisualisation.MapVisualiser;
+import agh.ics.oop.map.RectangularMap;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

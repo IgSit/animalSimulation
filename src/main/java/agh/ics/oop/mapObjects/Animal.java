@@ -1,4 +1,9 @@
-package agh.ics.oop;
+package agh.ics.oop.mapObjects;
+
+import agh.ics.oop.interfaces.IPositionChangeObserver;
+import agh.ics.oop.map.Vector2d;
+import agh.ics.oop.map.AbstractWorldMap;
+import agh.ics.oop.map.MapDirection;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -116,7 +121,7 @@ public class Animal extends MapObject implements Comparator<Animal> {
         };
     }
 
-    //communicate with the map and move
+    //communicate with the agh.ics.oop.map and move
 
     public void addObserver(IPositionChangeObserver observer) {
         observers.add(observer);
@@ -178,7 +183,6 @@ public class Animal extends MapObject implements Comparator<Animal> {
         mother.changeEnergy((int) (-0.25 * mother.energy));
         numberOfChildren++;
         mother.numberOfChildren++;
-        map.numberOfDeadAnimals++;
         return child;
     }
 

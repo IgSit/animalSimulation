@@ -1,6 +1,11 @@
-package agh.ics.oop;
+package agh.ics.oop.engine;
 
 import agh.ics.oop.gui.PartialApp;
+import agh.ics.oop.interfaces.IEngine;
+import agh.ics.oop.interfaces.IEngineMoveObserver;
+import agh.ics.oop.map.RectangularMap;
+import agh.ics.oop.map.Vector2d;
+import agh.ics.oop.mapObjects.Animal;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package agh.ics.oop;
+package agh.ics.oop.map;
 
 import java.util.Objects;
 
@@ -15,11 +15,11 @@ public record Vector2d(int x, int y) {
         return "(" + x + ", " + y + ")";
     }
 
-    boolean precedes(Vector2d other) {
+    public boolean precedes(Vector2d other) {
         return x <= other.x && y <= other.y;
     }
 
-    boolean follows(Vector2d other) {
+    public boolean follows(Vector2d other) {
         return x >= other.x && y >= other.y;
     }
 

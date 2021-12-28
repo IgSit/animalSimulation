@@ -1,4 +1,4 @@
-package agh.ics.oop.gui;
+package agh.ics.oop.gui.mapVisualisation;
 
 import javafx.scene.image.Image;
 import java.io.FileInputStream;

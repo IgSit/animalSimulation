@@ -1,9 +1,16 @@
-package agh.ics.oop;
+package agh.ics.oop.map;
+
+import agh.ics.oop.interfaces.IEngine;
+import agh.ics.oop.interfaces.IEngineMoveObserver;
+import agh.ics.oop.mapObjects.Animal;
+import agh.ics.oop.mapObjects.AnimalComparator;
+import agh.ics.oop.mapObjects.Grass;
+import agh.ics.oop.mapObjects.MapObject;
 
 import java.util.*;
 import static java.util.Collections.shuffle;
 
-public class RectangularMap extends AbstractWorldMap{
+public class RectangularMap extends AbstractWorldMap {
     // basic info constants
     private final Vector2d lowerLeft;
     private final Vector2d upperRight;
@@ -89,7 +96,7 @@ public class RectangularMap extends AbstractWorldMap{
         return jungleLowerLeft.precedes(position) && jungleUpperRight.follows(position);
     }
 
-    // integration with interfaces
+    // integration with agh.ics.oop.interfaces
 
     @Override
     public String toString() {
@@ -153,7 +160,7 @@ public class RectangularMap extends AbstractWorldMap{
 
     // grass generation
 
-    private void generateGrass() {  // generate grass at the beginning of map
+    private void generateGrass() {  // generate grass at the beginning of agh.ics.oop.map
         List<Grass> jungleGrass = new ArrayList<>();
         List<Grass> desertGrass = new ArrayList<>();
         for (int i = 0; i <= upperRight.x(); i++) {
