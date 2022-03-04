@@ -7,6 +7,8 @@ import agh.ics.oop.interfaces.IEngineMoveObserver;
 import agh.ics.oop.map.RectangularMap;
 import agh.ics.oop.engine.SimulationEngine;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
@@ -42,24 +44,55 @@ public class PartialApp implements IEngineMoveObserver {
         newDay(0);
 
         Thread engineThread = new Thread(engine);
-        Button startButton = new Button("Start");
+        Button startButton = new Button("START");
+
+        Button pauseButton = new Button("PAUSE");
+        pauseButton.setOnAction(eventClick -> {
+                    engineThread.suspend();
+                    startButton.setStyle("-fx-background-color: #2ea12e; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                            "-fx-font-family: 'JetBrains Mono'; -fx-opacity: 1");
+                    pauseButton.setStyle("-fx-background-color: #269bb0; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                            "-fx-font-family: 'JetBrains Mono'; -fx-opacity: 0.5");
+                }
+        );
+
         startButton.setOnAction( eventClick -> {
             if (engineThread.getState() == Thread.State.NEW)
                 engineThread.start();
             else if (engineThread.isAlive())
                 engineThread.resume();
+            startButton.setStyle("-fx-background-color: #2ea12e; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                    "-fx-font-family: 'JetBrains Mono'; -fx-opacity: 0.5");
+            pauseButton.setStyle("-fx-background-color: #269bb0; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                    "-fx-font-family: 'JetBrains Mono'; -fx-opacity: 1");
         });
 
-        Button pauseButton = new Button("Pause");
-        pauseButton.setOnAction(eventClick ->
-                engineThread.suspend()
-        );
-
         VBox plots = new VBox(plotter.getLineChart(), statsPlotter.getLineChart());
-        VBox mapWithButtons = new VBox(new HBox(startButton, pauseButton), mapVisualiser.getGridPane());
+        HBox controls = new HBox(startButton, pauseButton);
+        GridPane grid = mapVisualiser.getGridPane();
+        VBox mapWithButtons = new VBox(controls, grid);
         VBox mapWithStatsPanel = new VBox(mapWithButtons, statsPanel.getPanel());
 
-        return new HBox(mapWithStatsPanel, plots);
+        HBox partialApp = new HBox(mapWithStatsPanel, plots);
+
+        /* CSS styling */
+
+        controls.setAlignment(Pos.CENTER);
+        controls.setPadding(new Insets(10, 10, 10, 10));
+        controls.setSpacing(20);
+        startButton.setStyle("-fx-background-color: #2ea12e; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                             "-fx-font-family: 'JetBrains Mono'");
+        pauseButton.setStyle("-fx-background-color: #269bb0; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                "-fx-font-family: 'JetBrains Mono'; -fx-opacity: 0.5");
+
+        grid.setStyle("-fx-background-color: #919191");
+
+        partialApp.setStyle("-fx-background-color: #545353");
+
+        plots.setSpacing(20);
+        plots.setPadding(new Insets(10, 10, 10, 10));
+
+        return partialApp;
     }
 
     public void newDay(int day) {

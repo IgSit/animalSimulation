@@ -3,6 +3,7 @@ package agh.ics.oop.gui;
 import agh.ics.oop.gui.InputOutput.InputValues;
 import agh.ics.oop.map.RectangularMap;
 import javafx.application.*;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -26,7 +27,9 @@ public class App extends Application{
 
             for (int i =0; i < n; i++) {
                 labels[i] = new Label(labelTexts[i]);
+                labels[i].setStyle("-fx-text-fill: #bbbbbb; -fx-font-size: 15px");
                 textFields[i] = new TextField(defaultValues[i]);
+                textFields[i].setStyle("-fx-background-color: #797979; -fx-border-width: 2px; -fx-border-color: #484747");
             }
             VBox labelBox = new VBox(labels[InputValues.WIDTH.toIndex()], labels[InputValues.HEIGHT.toIndex()],
                     labels[InputValues.JUNGLE_RATIO.toIndex()], labels[InputValues.ANIMAL_ENERGY.toIndex()],
@@ -43,8 +46,9 @@ public class App extends Application{
             Button button = new Button("Apply and run");
             VBox menu = new VBox(inputBox, button);
             menu.setAlignment(Pos.CENTER);
+            menu.setSpacing(20);
 
-            Scene scene = new Scene(menu);
+            Scene scene = new Scene(menu, 320, 300);
             primaryStage.setScene(scene);
             primaryStage.show();
 
@@ -64,6 +68,15 @@ public class App extends Application{
 
                 runSimulation(primaryStage);
             });
+
+            /* CSS */
+
+            menu.setStyle("-fx-background-color: #5b5b5b");
+            menu.setPadding(new Insets(10, 10, 10 ,10));
+
+            button.setStyle("-fx-background-color: #2ea12e; -fx-font-weight: 800; -fx-font-size: 14px; " +
+                    "-fx-font-family: 'JetBrains Mono'");
+            button.setPadding(new Insets(10, 10 ,10 ,10));
         }
         catch(IllegalArgumentException exception) {
             System.out.println(exception.getMessage());
@@ -72,7 +85,10 @@ public class App extends Application{
     }
 
     private void runSimulation(Stage primaryStage) {
-        Scene newScene = new Scene(new HBox(borderedApp.runSimulation(), nonBorderedApp.runSimulation()), 1300, 700);
+        HBox simulations = new HBox(borderedApp.runSimulation(), nonBorderedApp.runSimulation());
+        simulations.setSpacing(50);
+        simulations.setStyle("-fx-background-color: #545353");
+        Scene newScene = new Scene(simulations, 1300, 700);
         primaryStage.setScene(newScene);
         primaryStage.show();
         primaryStage.setOnCloseRequest(windowEvent -> {

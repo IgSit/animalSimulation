@@ -1,5 +1,6 @@
 package agh.ics.oop.gui.statsAndPlots;
 
+import javafx.geometry.Insets;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -26,5 +27,7 @@ public abstract class AbstractPlotter {
 
         lineChart = new LineChart<>(xAxis, yAxis);
         lineChart.setAnimated(false);
+        lineChart.setStyle("-fx-background-color: #777777");
+        lineChart.setPadding(new Insets(10, 10, 10, 10));
     }
 }

@@ -14,7 +14,7 @@ import static java.util.Collections.shuffle;
 public class SimulationEngine implements IEngine, Runnable{
     private final RectangularMap map;
     private final ArrayList<IEngineMoveObserver> observers;
-    private final int moveDelay = 300;
+    private final int moveDelay = 80;
     private final PartialApp app;
 
     public SimulationEngine(RectangularMap map, int numberOfAnimals, PartialApp app) {
